@@ -5,7 +5,8 @@ interface ApiResponse {
   error?: string;
 }
 
-export async function fetchCryptoData(coins: string = 'btc,eth'): Promise<ApiResponse> {
+// coins: string = 'btc,eth'
+export async function fetchCryptoData(): Promise<ApiResponse> {
   // try {
   //   const response = await fetch(`http://localhost:5000/api/crypto/volume-and-transactions?coin=${coins}`, {
   //     headers: {

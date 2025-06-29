@@ -54,13 +54,13 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
 
 
     if (coinFilter === 'BTC' || coinFilter === 'both') {
-      const btcSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
+      const btcSeries = chart.addSeries(LineSeries, { lineWidth: 2, color: '#f7931a' });
       btcSeries.setData(formatData('BTC'));
       seriesRef.current.push(btcSeries);
     }
 
     if (coinFilter === 'ETH' || coinFilter === 'both') {
-      const ethSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
+      const ethSeries = chart.addSeries(LineSeries, { lineWidth: 2, color: '#627eea' });
       ethSeries.setData(formatData('ETH'));
       seriesRef.current.push(ethSeries);
     }

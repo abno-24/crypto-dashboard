@@ -17,22 +17,22 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
   return (
     <div className="flex justify-center space-x-4 p-4">
       <button
+        onClick={() => handleFilterChange('both')}
+        className={`px-4 py-2 rounded ${selectedFilter === 'both' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} cursor-pointer`}
+      >
+        Both
+      </button>
+      <button
         onClick={() => handleFilterChange('BTC')}
-        className={`px-4 py-2 rounded ${selectedFilter === 'BTC' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+        className={`px-4 py-2 rounded ${selectedFilter === 'BTC' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} cursor-pointer`}
       >
         BTC
       </button>
       <button
         onClick={() => handleFilterChange('ETH')}
-        className={`px-4 py-2 rounded ${selectedFilter === 'ETH' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+        className={`px-4 py-2 rounded ${selectedFilter === 'ETH' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} cursor-pointer`}
       >
         ETH
-      </button>
-      <button
-        onClick={() => handleFilterChange('both')}
-        className={`px-4 py-2 rounded ${selectedFilter === 'both' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
-      >
-        Both
       </button>
     </div>
   )

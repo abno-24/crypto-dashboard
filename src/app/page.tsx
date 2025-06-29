@@ -1,34 +1,17 @@
-'use client';
+import { fetchCryptoData } from '@/lib/api';
+import FilterWrapper from '@/components/FilterWrapper';
 
-import { useState } from 'react';
-import { CryptoData } from '@/types';
-import Chart from '@/components/Chart';
-import Filter from '@/components/Filter';
+export default async function Home() {
+  const { data, error } = await fetchCryptoData();
 
-interface FilterWrapperProps {
-  initialData: CryptoData[];
-}
-
-const FilterWrapper: React.FC<FilterWrapperProps> = ({ initialData }) => {
-  const [coinFilter, setCoinFilter] = useState<'BTC' | 'ETH' | 'both'>('both');
-  const [isLoading, setIsLoading] = useState(false);
+  if (error) {
+    return <div className="text-center text-red-500 p-4">Error: {error}</div>;
+  }
 
   return (
-    <>
-      <Filter onFilterChange={(filter) => {
-        setIsLoading(true);
-        setCoinFilter(filter);
-        setTimeout(() => setIsLoading(false), 0);
-      }} />
-      {isLoading ? (
-        <div className="text-center p-4">Loading...</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Chart data={initialData} coinFilter={coinFilter} type="volume" />
-          <Chart data={initialData} coinFilter={coinFilter} type="transactions" />
-        </div>
-      )}
-    </>
-  )
+    <main className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold text-center mb-6">Crypto Dashboard</h1>
+      <FilterWrapper initialData={data} />
+    </main>
+  );
 }
-export default FilterWrapper;

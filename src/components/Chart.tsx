@@ -1,8 +1,15 @@
 'use client';
 
-import { createChart, ColorType } from "lightweight-charts";
+import { 
+  createChart,
+  ColorType,
+  Time,
+  IChartApi,
+  LineSeries,
+  ISeriesApi
+} from "lightweight-charts";
 import { useEffect, useRef } from "react";
-import { CryptoData } from "@/types";
+import { CryptoData, ChartDataPoint } from "@/types";
 
 interface ChartProps {
   data: CryptoData[];
@@ -12,22 +19,25 @@ interface ChartProps {
 
 const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<any>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<'Line'>[]>([]);
 
   useEffect(() => {
-    if (!chartContainerRef.current) return;
+    const container = chartContainerRef.current;
+    if (!container) return;
+
+    // if (chartRef.current) {
+    //   chartRef.current.remove();
+    //   chartRef.current = null;
+    // }
 
     // Initialize chart
-    chartRef.current = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
+    const chart = createChart(container, {
+      width: container.clientWidth,
       height: 300,
       layout: {
         background: { type: ColorType.Solid, color: '#ffffff' },
-        textColor: '#333',
-      },
-      grid: {
-        vertLines: { color: '#f0f0f0' },
-        horzLines: { color: '#f0f0f0' },
+        textColor: '#000',
       },
       timeScale: {
         timeVisible: true,
@@ -35,47 +45,46 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
       },
     });
 
-    // Prepare data
-    const btcData = data
-      .filter((d) => d.coin === 'BTC')
-      .map((d) => ({
-        time: new Date(d.timestamp).getTime() / 1000,
-        value: type === 'volume' ? parseFloat(d.volume_usd) / 1e9 : parseInt(d.transaction_count)
-      }))
-      .sort((a, b) => a.time - b.time);
+    chartRef.current = chart;
 
-    const ethData = data
-      .filter((d) => d.coin === 'ETH')
-      .map((d) => ({
-        time: new Date(d.timestamp).getTime() / 1000,
-        value: type === 'volume' ? parseFloat(d.volume_usd) / 1e9 : parseInt(d.transaction_count),
-      }))
-      .sort((a, b) => a.time - b.time);
+    const formatData = (coin: 'BTC' | 'ETH'): ChartDataPoint[] =>
+      data
+        .filter((d) => d.coin === coin)
+        .map((d) => {
+          const value =
+            type === 'volume'
+              ? parseFloat(d.volume_usd) / 1e9
+              : parseInt(d.transaction_count);
+          if (isNaN(value)) return null;
+          return {
+            time: Math.floor(new Date(d.timestamp).getTime() / 1000) as Time,
+            value,
+          };
+        })
+        .filter((d): d is ChartDataPoint => d !== null)
+        .sort((a, b) => (a.time as number) - (b.time as number));
 
-    // Add line series
+
     if (coinFilter === 'BTC' || coinFilter === 'both') {
-      const btcSeries = chartRef.current.addLineSeries({
-        color: '#f7931a',
-        title: 'BTC',
-      });
-      btcSeries.setData(btcData);
-    }
+      const btcSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
+      btcSeries.setData(formatData('BTC'));
+      // Uncomment if you want to keep track of series
+        seriesRef.current.push(btcSeries);
+      }
 
     if (coinFilter === 'ETH' || coinFilter === 'both') {
-      const ethSeries = chartRef.current.addLineSeries({
-        color: '#627eea',
-        title: 'ETH',
-      });
-      ethSeries.setData(ethData);
+      const ethSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
+      ethSeries.setData(formatData('ETH'));
+      seriesRef.current.push(ethSeries);
     }
 
-    // Auto-scale and fit content
-    chartRef.current.timeScale().fitContent();
+    chart.timeScale().fitContent();
 
-    // Handle resize
     const handleResize = () => {
       if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+        });
       }
     };
 
@@ -83,7 +92,7 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      chartRef.current?.remove();
+      chart.remove(); // safely destroy chart
     };
   }, [data, coinFilter, type]);
 

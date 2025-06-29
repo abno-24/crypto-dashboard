@@ -1,3 +1,5 @@
+import { Time } from 'lightweight-charts';
+
 export interface CryptoData {
   id: number;
   coin: 'BTC' | 'ETH';
@@ -7,6 +9,6 @@ export interface CryptoData {
 }
 
 export interface ChartDataPoint {
-  time: number;
+  time: Time;
   value: number;
 }

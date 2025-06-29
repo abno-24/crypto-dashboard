@@ -1,13 +1,6 @@
 'use client';
 
-import { 
-  createChart,
-  ColorType,
-  Time,
-  IChartApi,
-  LineSeries,
-  ISeriesApi
-} from "lightweight-charts";
+import { createChart, ColorType, Time, IChartApi, LineSeries, ISeriesApi } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { CryptoData, ChartDataPoint } from "@/types";
 
@@ -25,11 +18,6 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
   useEffect(() => {
     const container = chartContainerRef.current;
     if (!container) return;
-
-    // if (chartRef.current) {
-    //   chartRef.current.remove();
-    //   chartRef.current = null;
-    // }
 
     // Initialize chart
     const chart = createChart(container, {
@@ -68,9 +56,8 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
     if (coinFilter === 'BTC' || coinFilter === 'both') {
       const btcSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
       btcSeries.setData(formatData('BTC'));
-      // Uncomment if you want to keep track of series
-        seriesRef.current.push(btcSeries);
-      }
+      seriesRef.current.push(btcSeries);
+    }
 
     if (coinFilter === 'ETH' || coinFilter === 'both') {
       const ethSeries = chart.addSeries(LineSeries, { lineWidth: 2 });
@@ -92,7 +79,7 @@ const Chart: React.FC<ChartProps> = ({ data, coinFilter, type }) => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      chart.remove(); // safely destroy chart
+      chart.remove();
     };
   }, [data, coinFilter, type]);
 

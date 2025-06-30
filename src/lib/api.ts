@@ -11,6 +11,7 @@ export async function fetchCryptoData(coins: string = 'btc,eth'): Promise<ApiRes
       headers: {
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {

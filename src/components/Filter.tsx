@@ -6,6 +6,14 @@ interface FilterProps {
   onFilterChange: (filter: 'BTC' | 'ETH' | 'both') => void;
 }
 
+/**
+ * Filter component displays a row of buttons for selecting the type of
+ * cryptocurrency data to display.
+ *
+ * The component calls the onFilterChange callback when the filter changes.
+ *
+ * @param onFilterChange - A function that takes a filter type argument ('BTC', 'ETH', or 'both') and is called when the filter changes.
+ */
 const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
   const [selectedFilter, setSelectedFilter] = useState<'BTC' | 'ETH' | 'both'>('both');
 

@@ -15,7 +15,7 @@ export default function Attribution() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/logos/dune.png"
+            src="/logos/da.png"
             alt="Dune Analytics Logo"
             width={24}
             height={24}
